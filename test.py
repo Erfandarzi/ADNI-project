@@ -13,19 +13,27 @@ import torch
 from models import Generator
 from datasets import ImageDataset
 
+
+
+
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--batchSize', type=int, default=1, help='size of the batches')
-parser.add_argument('--dataroot', type=str, default='datasets/horse2zebra/', help='root directory of the dataset')
+parser.add_argument('--dataroot', type=str, default='datasets/T1T2/', help='root directory of the dataset')
 parser.add_argument('--input_nc', type=int, default=3, help='number of channels of input data')
 parser.add_argument('--output_nc', type=int, default=3, help='number of channels of output data')
 parser.add_argument('--size', type=int, default=256, help='size of the data (squared assumed)')
 parser.add_argument('--cuda', action='store_true', help='use GPU computation')
 parser.add_argument('--n_cpu', type=int, default=8, help='number of cpu threads to use during batch generation')
-parser.add_argument('--generator_A2B', type=str, default='output/netG_A2B.pth', help='A2B generator checkpoint file')
-parser.add_argument('--generator_B2A', type=str, default='output/netG_B2A.pth', help='B2A generator checkpoint file')
+# parser.add_argument('--output_nc', type=int, default=3, help='number of channels of output data')
+# parser.add_argument('--size', type=int, default=256, help='size of the data (squared assumed)')
+# parser.add_argument('--cuda', action='store_true', help='use GPU computation')
+parser.add_argument('--generator_A2B', type=str, default='/content/PyTorch-GAN/output/netG_A2B.pth', help='A2B generator checkpoint file')
+parser.add_argument('--generator_B2A', type=str, default='/content/PyTorch-GAN/output/netG_B2A.pth', help='B2A generator checkpoint file')
 opt = parser.parse_args()
 print(opt)
-
+print('Working...')
 if torch.cuda.is_available() and not opt.cuda:
     print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 
@@ -60,11 +68,11 @@ dataloader = DataLoader(ImageDataset(opt.dataroot, transforms_=transforms_, mode
 
 ###### Testing######
 
-# Create output dirs if they don't exist
-if not os.path.exists('output/A'):
-    os.makedirs('output/A')
-if not os.path.exists('output/B'):
-    os.makedirs('output/B')
+# Create output dirs
+if not os.path.exists('/content/PyTorch-GAN/output/A'):
+    os.makedirs('/content/PyTorch-GAN/output/A')
+if not os.path.exists('/content/PyTorch-GAN/output/B'):
+    os.makedirs('/content/PyTorch-GAN/output/B')
 
 for i, batch in enumerate(dataloader):
     # Set model input
@@ -76,10 +84,12 @@ for i, batch in enumerate(dataloader):
     fake_A = 0.5*(netG_B2A(real_B).data + 1.0)
 
     # Save image files
-    save_image(fake_A, 'output/A/%04d.png' % (i+1))
-    save_image(fake_B, 'output/B/%04d.png' % (i+1))
+    save_image(fake_A, '/content/PyTorch-GAN/output/A/%04d.png' % (i+1))
+    save_image(fake_B, '/content/PyTorch-GAN/output/B/%04d.png' % (i+1))
 
-    sys.stdout.write('\rGenerated images %04d of %04d' % (i+1, len(dataloader)))
+   # sys.stdout.write('\rGenerated images %04d of %04d' % (i+1, len(dataloader)))
+    #sys.stdout.write('\rProgress %02d %' % (i+1/ len(dataloader) *100))
+sys.stdout.write('\r Done!')
 
 sys.stdout.write('\n')
 ###################################
