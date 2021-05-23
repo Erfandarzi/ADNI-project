@@ -1,4 +1,4 @@
-# Pytorch-CycleGAN
+# Pytorch-GAN
 A clean and readable Pytorch implementation of a GAN to be tested on ADNI dataset
 
 ## Prerequisites
